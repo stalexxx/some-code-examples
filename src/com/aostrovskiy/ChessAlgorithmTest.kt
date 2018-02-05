@@ -76,7 +76,7 @@ private fun regress() {
         ChessBoardEvaluator(m, n)
             .initStart(charArrayOf(*box))
             .also {
-                print("count = $it")
+//                print("count = $it")
             } == expected
 
     )
