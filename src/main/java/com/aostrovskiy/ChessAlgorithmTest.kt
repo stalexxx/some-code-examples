@@ -1,6 +1,9 @@
 @file:Suppress("RemoveEmptyParenthesesFromLambdaCall")
 
-package com.aostrovskiy
+package main.java.com.aostrovskiy
+
+import java.util.concurrent.ForkJoinPool
+import java.util.concurrent.ForkJoinTask
 
 fun main(args: Array<String>) {
 
@@ -12,27 +15,83 @@ fun main(args: Array<String>) {
     fullStart(m, n, *init)
 }
 
+class Task(val m: RowSize,
+           val n: ColumnSize,
+           val ar: CharArray) : ForkJoinTask<Long>() {
+    var r: Long? = null
+
+    override fun setRawResult(value: Long?) {
+        r = value
+    }
+
+    override fun getRawResult(): Long {
+        return r!!
+    }
+
+    override fun exec(): Boolean {
+        r = ChessBoardEvaluator(m, n).initStart(ar)
+        println("For combination ${String(ar)}: $r, threadname ${Thread.currentThread().name}")
+
+        return true
+    }
+
+}
+
+
 fun fullStart(m: RowSize, n: ColumnSize, vararg pieces: Char) {
     val combinations = combinations(charArrayOf(*pieces))
-    var total: Long = 0
-
     println("total combinations: ${combinations.size}")
 
     val time = System.currentTimeMillis()
 
-    ChessBoardEvaluator(m, n)() {
+    var sum: Long = 0
 
-        for (comb in combinations) {
-            val count = initStart(comb)
-            println("For combination ${String(comb)}: $count")
-            total += count
-        }
 
-        println("Total $total")
-
+//    java parallel stream
+    ChessBoardEvaluator(m, n).invoke {
+        sum = combinations.parallelStream()
+            .map {
+                val initStart = initStart(it)
+                println("For combination ${String(it)}: $initStart, threadname ${Thread.currentThread().name}")
+                initStart
+            }.reduce(0, java.lang.Long::sum)
     }
 
-    println("Process ended in ${(System.currentTimeMillis() - time) / 1000 }s")
+//    ChessBoardEvaluator(m, n).invoke {
+//        sum = combinations.parallelStream()
+//            .map {
+//
+//                val initStart = initStart(it)
+//                println("For combination ${String(it)}: $initStart, threadname ${Thread.currentThread().name}")
+//                initStart
+//            }.reduce(0, java.lang.Long::sum)
+//    }
+
+    //plain fork join pool
+
+    val pool = ForkJoinPool.commonPool()
+//    val sum2 = combinations.map {
+//        Task(m, n, it)
+//    }.map {
+//            pool.invoke(it)
+//        }.sum()
+//
+    //coroutines
+    //coroutines
+//
+
+//        for (comb in combinations) {
+//            val count = initStart(comb)
+//            println("For combination ${String(comb)}: $count")
+//
+//            executor.invo
+//            total += count
+//        }
+
+    println("Total $sum")
+
+
+    println("Process ended in ${(System.currentTimeMillis() - time)}ms")
 
 }
 
@@ -76,7 +135,7 @@ private fun regress() {
         ChessBoardEvaluator(m, n)
             .initStart(charArrayOf(*box))
             .also {
-//                print("count = $it")
+                //                print("count = $it")
             } == expected
 
     )

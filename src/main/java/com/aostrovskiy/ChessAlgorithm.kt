@@ -1,4 +1,4 @@
-package com.aostrovskiy
+package main.java.com.aostrovskiy
 
 typealias Board = CharArray
 typealias Position = Int
@@ -27,7 +27,7 @@ class ChessBoardEvaluator(
     }
 
     //mark и check для максимального быстродействия дублированы
-    private inline fun Board.checkBishop(pos: Position): Boolean {
+    private  fun Board.checkBishop(pos: Position): Boolean {
 
         val col = pos % n
 
@@ -74,7 +74,7 @@ class ChessBoardEvaluator(
         return true
     }
 
-    internal inline fun Board.markBishop(pos: Position): Board {
+    internal  fun Board.markBishop(pos: Position): Board {
 
         val col = pos % n
 
@@ -113,7 +113,7 @@ class ChessBoardEvaluator(
         return this
     }
 
-    private inline fun Board.checkKnight(pos: Int): Boolean {
+    private  fun Board.checkKnight(pos: Int): Boolean {
         val row = pos / n
         val col = pos % n
 
@@ -152,7 +152,7 @@ class ChessBoardEvaluator(
         return true
     }
 
-    internal inline fun Board.markKnight(pos: Int): Board {
+    internal  fun Board.markKnight(pos: Int): Board {
         val row = pos / n
         val col = pos % n
 
@@ -192,11 +192,11 @@ class ChessBoardEvaluator(
         return this
     }
 
-    private inline fun Board.checkQueen(pos: Int): Boolean = checkBishop(pos) && checkCastle(pos)
+    private  fun Board.checkQueen(pos: Int): Boolean = checkBishop(pos) && checkCastle(pos)
 
-    internal inline fun Board.markQueen(pos: Position): Board = markBishop(pos).markCastle(pos)
+    internal  fun Board.markQueen(pos: Position): Board = markBishop(pos).markCastle(pos)
 
-    private inline fun Board.checkCastle(pos: Int): Boolean {
+    private  fun Board.checkCastle(pos: Int): Boolean {
         val col = pos % n
 
         for (i in pos - col until pos - col + n) {
@@ -217,7 +217,7 @@ class ChessBoardEvaluator(
         return true
     }
 
-    internal inline fun Board.markCastle(pos: Position): Board {
+    internal  fun Board.markCastle(pos: Position): Board {
 
         val col = pos % n
 
@@ -234,7 +234,7 @@ class ChessBoardEvaluator(
         return this
     }
 
-    private inline fun Board.checkKing(pos: Int): Boolean {
+    private  fun Board.checkKing(pos: Int): Boolean {
         val row = pos / n
         val col = pos % n
 
@@ -281,7 +281,7 @@ class ChessBoardEvaluator(
         return true
     }
 
-    internal inline fun Board.markKing(pos: Position): Board {
+    internal  fun Board.markKing(pos: Position): Board {
         val row = pos / n
         val col = pos % n
 
@@ -320,7 +320,7 @@ class ChessBoardEvaluator(
     }
 
     //проверяем что под ударом фигура а не пустое поле/поле под ударом
-    private inline fun Piece.hits() = this != none && this != attacked
+    private  fun Piece.hits() = this != none && this != attacked
 
 
     //проверяет, допустимо ли поставить
